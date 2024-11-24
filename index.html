@@ -271,23 +271,18 @@ window.addEventListener('load', () => {
   const animator = new AnimationController({
     circleRadius: 20,
     triangleSize: 25,
-    animationDuration: 4000,
+    animationDuration: 3000,
     minGap: 30,
-    maxGap: 60,
-    gapVariationSpeed: 1,
-    pathRandomness: 0.3,
-    speedVariation: 0.2,
+    maxGap: 100,
+    gapVariationSpeed: 10,
+    pathRandomness: 0.6,
+    speedVariation: 0.5,
     centerAttractionForce: 0.5,
     scrollCooldown: 5000,
     firstScrollDelay: 1000
   });
 });
 </script>
-
-<!-- Add this for testing scrolling -->
-<div style="height: 200vh; padding: 20px;">
-  Scroll content
-</div>
 
     <nav class="navbar">
     <a href="#work">Work</a>
