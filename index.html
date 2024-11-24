@@ -9,7 +9,7 @@
 </head>
 <body>
 
- <style>
+    <style>
 .animation-container {
   position: fixed;
   top: 0;
@@ -31,11 +31,11 @@
 }
 
 #animCircle {
-  fill: #0004FF;
+  fill: #4A90E2;
 }
 
 #animTriangle {
-  fill: #FF0000;
+  fill: #E24A90;
 }
 </style>
 </head>
@@ -273,6 +273,30 @@ window.addEventListener('load', () => {
 });
 </script>
 
+    <nav class="navbar">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="https://drive.google.com/file/d/137oiF-6MtJzSn1vhQD5wgykKUSkIyFAO/view?usp=sharing" target="_blank">Resume</a>
+</nav>
+    <main>
+        <div class="hero-section">
+            <h1><span class="light">Hi, I am</span> <span class="name">Abhiram</span></h1>
+            <p class="hero-description">I design intuitive experiences that seamlessly connect user needs with the magic of technology, driven by curiosity and a passion for innovation</p>
+            
+    <div class="scroll-indicator">
+        <div class="hover-circle"></div>
+        <svg class="arrow-down" width="20" height="40" viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 2L20 38M20 38L38 20M20 38L2 20" stroke="#CDCDCD" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+            <script>
+    document.querySelector('.scroll-indicator').addEventListener('click', function() {
+        document.querySelector('#work').scrollIntoView({ 
+            behavior: 'smooth'
+        });
+    });
+</script>
+
 
         </div>
 
@@ -431,6 +455,5 @@ An online Marketplace, Community and Awareness program to support the small scal
     </section>
 </section>
     </main>
-    
 </body>
 </html>
