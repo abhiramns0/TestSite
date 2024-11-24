@@ -269,16 +269,16 @@ class AnimationController {
 // Initialize with custom configuration
 window.addEventListener('load', () => {
   const animator = new AnimationController({
-    circleRadius: 20,
-    triangleSize: 25,
+    circleRadius: 10,
+    triangleSize: 20,
     animationDuration: 4000,
     minGap: 80,
     maxGap: 200,
-    gapVariationSpeed: 6,
-    pathRandomness: 1,
+    gapVariationSpeed: 3,
+    pathRandomness: .8,
     speedVariation: .2,
     centerAttractionForce: 0.5,
-    scrollCooldown: 5000,
+    scrollCooldown: 1000,
     firstScrollDelay: 1000
   });
 });
