@@ -8,7 +8,37 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 
-    class SimpleAnimationController {
+   <div class="animation-container">
+  <svg id="animationSvg" preserveAspectRatio="none">
+    <circle id="animCircle" class="shape" r="8" fill="#666"/>
+    <path id="animTriangle" class="shape" fill="#333"/>
+  </svg>
+</div>
+
+<style>
+.animation-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+#animationSvg {
+  width: 100%;
+  height: 100%;
+}
+
+.shape {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+</style>
+
+<script>
+class SimpleAnimationController {
   constructor() {
     this.circle = document.getElementById('animCircle');  // "mouse"
     this.triangle = document.getElementById('animTriangle');  // "cat"
@@ -30,6 +60,9 @@
         this.animate();
       }
     });
+
+    // Trigger first animation after a delay
+    setTimeout(() => this.animate(), 1000);
   }
   
   getRandomEdgePoint() {
@@ -55,8 +88,8 @@
     
     // Center point for curve
     const center = {
-      x: window.innerWidth / 2,
-      y: window.innerHeight / 2
+      x: window.innerWidth / 2 + (Math.random() - 0.5) * 200,  // Add some randomness to path
+      y: window.innerHeight / 2 + (Math.random() - 0.5) * 200
     };
     
     let lastMouseX = start.x;
@@ -121,6 +154,7 @@
 window.addEventListener('load', () => {
   new SimpleAnimationController();
 });
+</script>
 
 <body>
     <nav class="navbar">
