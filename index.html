@@ -27,7 +27,7 @@
 
 .shape {
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 1s;
 }
 
 #animCircle {
@@ -58,7 +58,7 @@ class AnimationController {
     // Animation settings
     this.circleRadius = 20;
     this.triangleSize = 25;
-    this.animationDuration = 6000;
+    this.animationDuration = 3000;
     this.minGap = 30;
     this.maxGap = 80;
     this.triangleDelay = 0; // Dynamic delay for triangle
@@ -68,7 +68,7 @@ class AnimationController {
   }
   
   init() {
-    setInterval(() => this.checkTiming(), 100);
+    setInterval(() => this.checkTiming(), 200);
   }
   
   generateRandomPath() {
@@ -145,13 +145,13 @@ class AnimationController {
                         ((this.maxGap + this.minGap) / 2);
     
     // Add some independent movement to triangle
-    const independentOffset = {
-      x: Math.sin(progress * Math.PI * 3) * 20,
-      y: Math.cos(progress * Math.PI * 4) * 20
-    };
+  //  const independentOffset = {
+  //    x: Math.sin(progress * Math.PI * 3) * 20,
+   //   y: Math.cos(progress * Math.PI * 4) * 20
+  //  };
     
-    const targetX = circleX - Math.cos(angle) * gapVariation + independentOffset.x;
-    const targetY = circleY - Math.sin(angle) * gapVariation + independentOffset.y;
+  //  const targetX = circleX - Math.cos(angle) * gapVariation + independentOffset.x;
+  //  const targetY = circleY - Math.sin(angle) * gapVariation + independentOffset.y;
     
     // Smoothly interpolate triangle position
     this.triangleX = this.triangleX || targetX;
@@ -268,8 +268,8 @@ window.addEventListener('load', () => {
   animator.setCircleRadius(20);
   animator.setTriangleSize(25);
   animator.setGapRange(30, 80);
-  animator.setCircleColor('#4A90E2');
-  animator.setTriangleColor('#E24A90');
+  animator.setCircleColor('#0004FF');
+  animator.setTriangleColor('#FF0000');
 });
 </script>
 
