@@ -9,269 +9,115 @@
 </head>
 <body>
 
-    <style>
-.animation-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1000;
-}
+    generateRandomPath() {
+    const getScreenEdgePoint = (side) => {
+        switch (side) {
+            case 0: return { x: -50, y: Math.random() * window.innerHeight }; // Left
+            case 1: return { x: window.innerWidth + 50, y: Math.random() * window.innerHeight }; // Right
+            case 2: return { x: Math.random() * window.innerWidth, y: -50 }; // Top
+            case 3: return { x: Math.random() * window.innerWidth, y: window.innerHeight + 50 }; // Bottom
+        }
+    };
 
-#animationSvg {
-  width: 100%;
-  height: 100%;
-}
-
-.shape {
-  opacity: 0;
-  transition: opacity 0.1s;
-}
-
-#animCircle {
-  fill: #4A90E2;
-}
-
-#animTriangle {
-  fill: #E24A90;
-}
-</style>
-</head>
-<body>
-<div class="animation-container">
-  <svg id="animationSvg" preserveAspectRatio="none">
-    <circle id="animCircle" class="shape" r="20" />
-    <path id="animTriangle" class="shape" />
-  </svg>
-</div>
-
-<script>
-class AnimationController {
-  constructor() {
-    this.circle = document.getElementById('animCircle');
-    this.triangle = document.getElementById('animTriangle');
-    this.startTime = Date.now();
-    this.isAnimating = false;
-    
-    // Animation settings
-    this.circleRadius = 20;
-    this.triangleSize = 25;
-    this.animationDuration = 3000;
-    this.minGap = 30;
-    this.maxGap = 80;
-    this.triangleDelay = 0; // Dynamic delay for triangle
-    this.triangleProgress = 0; // Separate progress for triangle
-    
-    this.init();
-  }
-  
-  init() {
-    setInterval(() => this.checkTiming(), 200);
-  }
-  
-  generateRandomPath() {
-    const startSide = Math.floor(Math.random() * 4); // 0: left, 1: right, 2: top, 3: bottom
+    const startSide = Math.floor(Math.random() * 4);
     const endSide = (startSide + 2) % 4; // Opposite side
-    
-    const getRandomPoint = (side) => {
-      switch(side) {
-        case 0: return { x: -50, y: Math.random() * window.innerHeight };
-        case 1: return { x: window.innerWidth + 50, y: Math.random() * window.innerHeight };
-        case 2: return { x: Math.random() * window.innerWidth, y: -50 };
-        case 3: return { x: Math.random() * window.innerWidth, y: window.innerHeight + 50 };
-      }
-    };
-    
-    const start = getRandomPoint(startSide);
-    const end = getRandomPoint(endSide);
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
-    
-    // Generate control points for a more complex path
-    const points = [start];
-    const numPoints = 6;
-    
-    for (let i = 1; i < numPoints - 1; i++) {
-      const progress = i / (numPoints - 1);
-      const baseX = start.x + (end.x - start.x) * progress;
-      const baseY = start.y + (end.y - start.y) * progress;
-      
-      // Add circular deviation from straight line
-      const radius = Math.min(window.innerWidth, window.innerHeight) * 0.3;
-      const angle = Math.PI * 2 * progress + Math.random() * Math.PI;
-      
-      points.push({
-        x: baseX + Math.cos(angle) * radius * Math.sin(progress * Math.PI),
-        y: baseY + Math.sin(angle) * radius * Math.sin(progress * Math.PI),
-        speedMultiplier: 0.5 + Math.random() * 1.5 // Random speed for each segment
-      });
+
+    const start = getScreenEdgePoint(startSide);
+    const end = getScreenEdgePoint(endSide);
+
+    const controlPoints = [];
+    const numControlPoints = 4; // Number of control points for smooth curves
+    for (let i = 0; i < numControlPoints; i++) {
+        controlPoints.push({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+        });
     }
-    
-    points.push(end);
-    return points;
-  }
-  
-  calculatePointOnPath(progress, points) {
-    const numSegments = points.length - 1;
-    let segment = Math.floor(progress * numSegments);
-    segment = Math.min(segment, numSegments - 1);
-    const segmentProgress = (progress * numSegments) % 1;
-    
-    const p0 = points[segment];
-    const p1 = points[segment + 1];
-    
-    // Apply speed multiplier to segment
-    const speedMult = p0.speedMultiplier || 1;
-    const adjustedProgress = Math.sin(segmentProgress * Math.PI * speedMult) * 0.5 + 0.5;
-    
-    // Add oscillation
-    const oscillation = Math.sin(progress * Math.PI * 6) * 15;
-    
+
+    return [start, ...controlPoints, end];
+}
+
+calculatePointOnPath(progress, points) {
+    const bezier = (t, p0, p1, p2, p3) =>
+        (1 - t) ** 3 * p0 +
+        3 * (1 - t) ** 2 * t * p1 +
+        3 * (1 - t) * t ** 2 * p2 +
+        t ** 3 * p3;
+
+    const segmentProgress = progress * (points.length - 3); // Scale progress to number of segments
+    const segmentIndex = Math.floor(segmentProgress);
+    const t = segmentProgress - segmentIndex;
+
+    const p0 = points[Math.max(segmentIndex - 1, 0)];
+    const p1 = points[segmentIndex];
+    const p2 = points[segmentIndex + 1];
+    const p3 = points[Math.min(segmentIndex + 2, points.length - 1)];
+
     return {
-      x: p0.x + (p1.x - p0.x) * adjustedProgress + Math.cos(progress * Math.PI * 4) * oscillation,
-      y: p0.y + (p1.y - p0.y) * adjustedProgress + Math.sin(progress * Math.PI * 4) * oscillation
+        x: bezier(t, p0.x, p1.x, p2.x, p3.x),
+        y: bezier(t, p0.y, p1.y, p2.y, p3.y),
     };
-  }
-  
-  updateTrianglePosition(circleX, circleY, progress) {
-    // Calculate desired position based on circle's position
-    const angle = Math.atan2(circleY - this.prevY, circleX - this.prevX);
-    
-    // Dynamic gap that varies with sine wave
-    const gapVariation = Math.sin(progress * Math.PI * 4) * 
-                        ((this.maxGap - this.minGap) / 2) + 
-                        ((this.maxGap + this.minGap) / 2);
-    
-    // Add some independent movement to triangle
-    const independentOffset = {
-      x: Math.sin(progress * Math.PI * 3) * 20,
-      y: Math.cos(progress * Math.PI * 4) * 20
-    };
-    
-    const targetX = circleX - Math.cos(angle) * gapVariation + independentOffset.x;
-    const targetY = circleY - Math.sin(angle) * gapVariation + independentOffset.y;
-    
-    // Smoothly interpolate triangle position
-    this.triangleX = this.triangleX || targetX;
-    this.triangleY = this.triangleY || targetY;
-    
-    const easing = 0.15;
-    this.triangleX += (targetX - this.triangleX) * easing;
-    this.triangleY += (targetY - this.triangleY) * easing;
-    
-    const trianglePoints = this.calculateTrianglePoints(
-      this.triangleX,
-      this.triangleY,
-      angle + Math.sin(progress * Math.PI * 2) * 0.2 // Add slight rotation
-    );
-    
-    this.triangle.setAttribute('d', trianglePoints);
-  }
-  
-  calculateTrianglePoints(x, y, angle) {
-    const size = this.triangleSize;
-    const points = [
-      { x: -size, y: -size/2 },
-      { x: -size, y: size/2 },
-      { x: size, y: 0 }
-    ];
-    
-    const rotatedPoints = points.map(p => ({
-      x: x + (p.x * Math.cos(angle) - p.y * Math.sin(angle)),
-      y: y + (p.x * Math.sin(angle) + p.y * Math.cos(angle))
-    }));
-    
-    return `M ${rotatedPoints[0].x},${rotatedPoints[0].y} 
-            L ${rotatedPoints[1].x},${rotatedPoints[1].y} 
-            L ${rotatedPoints[2].x},${rotatedPoints[2].y} Z`;
-  }
-  
-  animate() {
+}
+
+animate() {
     if (this.isAnimating) return;
-    
+
     this.isAnimating = true;
     const pathPoints = this.generateRandomPath();
     const startTime = performance.now();
     this.prevX = pathPoints[0].x;
     this.prevY = pathPoints[0].y;
-    
-    this.circle.style.opacity = 1;
-    this.triangle.style.opacity = 1;
-    
+
+    this.circle.style.opacity = 0;
+    this.triangle.style.opacity = 0;
+
+    const fadeDuration = 500; // Fade in/out duration in ms
+
     const animate = (currentTime) => {
-      const elapsed = currentTime - startTime;
-      let progress = elapsed / this.animationDuration;
-      
-      if (progress >= 1) {
-        this.isAnimating = false;
-        this.circle.style.opacity = 0;
-        this.triangle.style.opacity = 0;
-        return;
-      }
-      
-      // Add easing
-      progress = 0.5 - Math.cos(progress * Math.PI) / 2;
-      
-      // Update circle position
-      const pos = this.calculatePointOnPath(progress, pathPoints);
-      this.circle.setAttribute('cx', pos.x);
-      this.circle.setAttribute('cy', pos.y);
-      
-      // Update triangle with its own timing
-      this.triangleProgress += (progress - this.triangleProgress) * 0.1;
-      this.updateTrianglePosition(pos.x, pos.y, this.triangleProgress);
-      
-      this.prevX = pos.x;
-      this.prevY = pos.y;
-      
-      requestAnimationFrame(animate);
+        const elapsed = currentTime - startTime;
+        let progress = elapsed / this.animationDuration;
+
+        if (progress >= 1) {
+            this.circle.style.opacity = 0;
+            this.triangle.style.opacity = 0;
+            setTimeout(() => { this.isAnimating = false; }, fadeDuration);
+            return;
+        }
+
+        // Smooth easing
+        progress = 0.5 - Math.cos(progress * Math.PI) / 2;
+
+        // Update circle and triangle positions
+        const pos = this.calculatePointOnPath(progress, pathPoints);
+        this.circle.setAttribute('cx', pos.x);
+        this.circle.setAttribute('cy', pos.y);
+
+        // Fade in and out near edges
+        if (elapsed < fadeDuration) {
+            this.circle.style.opacity = elapsed / fadeDuration;
+            this.triangle.style.opacity = elapsed / fadeDuration;
+        } else if (elapsed > this.animationDuration - fadeDuration) {
+            const fadeOutTime = this.animationDuration - elapsed;
+            this.circle.style.opacity = fadeOutTime / fadeDuration;
+            this.triangle.style.opacity = fadeOutTime / fadeDuration;
+        } else {
+            this.circle.style.opacity = 1;
+            this.triangle.style.opacity = 1;
+        }
+
+        // Update triangle position
+        this.triangleProgress += (progress - this.triangleProgress) * 0.1;
+        this.updateTrianglePosition(pos.x, pos.y, this.triangleProgress);
+
+        this.prevX = pos.x;
+        this.prevY = pos.y;
+
+        requestAnimationFrame(animate);
     };
-    
+
     requestAnimationFrame(animate);
-  }
-  
-  checkTiming() {
-    const elapsed = (Date.now() - this.startTime) / 1000;
-    if ((elapsed >= 5 && elapsed < 5.1) || (elapsed >= 15 && elapsed < 15.1)) {
-      this.animate();
-    }
-  }
-  
-  setCircleRadius(radius) {
-    this.circleRadius = radius;
-    this.circle.setAttribute('r', radius);
-  }
-  
-  setTriangleSize(size) {
-    this.triangleSize = size;
-  }
-  
-  setCircleColor(color) {
-    this.circle.style.fill = color;
-  }
-  
-  setTriangleColor(color) {
-    this.triangle.style.fill = color;
-  }
-  
-  setGapRange(min, max) {
-    this.minGap = min;
-    this.maxGap = max;
-  }
 }
 
-window.addEventListener('load', () => {
-  const animator = new AnimationController();
-  
-  animator.setCircleRadius(20);
-  animator.setTriangleSize(25);
-  animator.setGapRange(30, 80);
-  animator.setCircleColor('#0004FF');
-  animator.setTriangleColor('#FF0000');
-});
-</script>
 
     <nav class="navbar">
     <a href="#work">Work</a>
