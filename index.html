@@ -9,210 +9,12 @@
 </head>
 <body>
 
-    <style>
-.animation-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1000;
-}
-
-#animationSvg {
-  width: 100%;
-  height: 100%;
-}
-
-.shape {
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-#animCircle {
-  fill: #4A90E2;
-}
-
-#animTriangle {
-  fill: #E24A90;
-}
-</style>
-</head>
-<body>
-<div class="animation-container">
-  <svg id="animationSvg" preserveAspectRatio="none">
-    <circle id="animCircle" class="shape" r="20" />
-    <path id="animTriangle" class="shape" />
-  </svg>
+    <div class="animation-container">
+    <svg id="animationSvg" preserveAspectRatio="none">
+        <circle id="animCircle" class="shape" r="20" />
+        <path id="animTriangle" class="shape" />
+    </svg>
 </div>
-
-<script>
-class AnimationController {
-  constructor() {
-    this.circle = document.getElementById('animCircle');
-    this.triangle = document.getElementById('animTriangle');
-    this.startTime = Date.now();
-    this.isAnimating = false;
-    
-    // Animation settings
-    this.circleRadius = 20;
-    this.triangleSize = 25;
-    this.animationDuration = 3000;
-    
-    this.init();
-  }
-  
-  init() {
-    // Start checking for animation triggers
-    setInterval(() => this.checkTiming(), 100);
-  }
-  
-  generateRandomPath() {
-    const startX = -50;
-    const startY = 100;
-    const endX = window.innerWidth + 50;
-    const endY = 500;
-    
-    // Generate control points for bezier curve
-    const cp1x = Math.random() * window.innerWidth * 0.3 + window.innerWidth * 0.2;
-    const cp1y = Math.random() * 300 + 100;
-    const cp2x = Math.random() * window.innerWidth * 0.3 + window.innerWidth * 0.5;
-    const cp2y = Math.random() * 300 + 200;
-    
-    return {
-      start: { x: startX, y: startY },
-      end: { x: endX, y: endY },
-      cp1: { x: cp1x, y: cp1y },
-      cp2: { x: cp2x, y: cp2y }
-    };
-  }
-  
-  calculatePointOnCurve(t, path) {
-    const { start, end, cp1, cp2 } = path;
-    return {
-      x: Math.pow(1-t, 3) * start.x + 
-         3 * Math.pow(1-t, 2) * t * cp1.x + 
-         3 * (1-t) * Math.pow(t, 2) * cp2.x + 
-         Math.pow(t, 3) * end.x,
-      y: Math.pow(1-t, 3) * start.y + 
-         3 * Math.pow(1-t, 2) * t * cp1.y + 
-         3 * (1-t) * Math.pow(t, 2) * cp2.y + 
-         Math.pow(t, 3) * end.y
-    };
-  }
-  
-  updateTrianglePosition(circleX, circleY, prevX, prevY) {
-    const angle = Math.atan2(circleY - prevY, circleX - prevX);
-    const trianglePoints = this.calculateTrianglePoints(
-      circleX - Math.cos(angle) * (this.circleRadius + 20),
-      circleY - Math.sin(angle) * (this.circleRadius + 20),
-      angle
-    );
-    this.triangle.setAttribute('d', trianglePoints);
-  }
-  
-  calculateTrianglePoints(x, y, angle) {
-    const size = this.triangleSize;
-    const points = [
-      { x: -size, y: -size/2 },
-      { x: -size, y: size/2 },
-      { x: size, y: 0 }
-    ];
-    
-    const rotatedPoints = points.map(p => ({
-      x: x + (p.x * Math.cos(angle) - p.y * Math.sin(angle)),
-      y: y + (p.x * Math.sin(angle) + p.y * Math.cos(angle))
-    }));
-    
-    return `M ${rotatedPoints[0].x},${rotatedPoints[0].y} 
-            L ${rotatedPoints[1].x},${rotatedPoints[1].y} 
-            L ${rotatedPoints[2].x},${rotatedPoints[2].y} Z`;
-  }
-  
-  animate() {
-    if (this.isAnimating) return;
-    
-    this.isAnimating = true;
-    const path = this.generateRandomPath();
-    const startTime = performance.now();
-    let prevX = path.start.x;
-    let prevY = path.start.y;
-    
-    // Show shapes
-    this.circle.style.opacity = 1;
-    this.triangle.style.opacity = 1;
-    
-    const animate = (currentTime) => {
-      const elapsed = currentTime - startTime;
-      let progress = elapsed / this.animationDuration;
-      
-      if (progress >= 1) {
-        this.isAnimating = false;
-        this.circle.style.opacity = 0;
-        this.triangle.style.opacity = 0;
-        return;
-      }
-      
-      // Add some randomness to the speed
-      progress += (Math.sin(progress * Math.PI * 4) * 0.1);
-      progress = Math.max(0, Math.min(1, progress));
-      
-      const pos = this.calculatePointOnCurve(progress, path);
-      
-      // Update circle position
-      this.circle.setAttribute('cx', pos.x);
-      this.circle.setAttribute('cy', pos.y);
-      
-      // Update triangle position
-      this.updateTrianglePosition(pos.x, pos.y, prevX, prevY);
-      
-      prevX = pos.x;
-      prevY = pos.y;
-      
-      requestAnimationFrame(animate);
-    };
-    
-    requestAnimationFrame(animate);
-  }
-  
-  checkTiming() {
-    const elapsed = (Date.now() - this.startTime) / 1000;
-    if ((elapsed >= 5 && elapsed < 5.1) || (elapsed >= 15 && elapsed < 15.1)) {
-      this.animate();
-    }
-  }
-  
-  // Public methods to adjust properties
-  setCircleRadius(radius) {
-    this.circleRadius = radius;
-    this.circle.setAttribute('r', radius);
-  }
-  
-  setTriangleSize(size) {
-    this.triangleSize = size;
-  }
-  
-  setCircleColor(color) {
-    this.circle.style.fill = color;
-  }
-  
-  setTriangleColor(color) {
-    this.triangle.style.fill = color;
-  }
-}
-
-// Initialize the animation when the page loads
-window.addEventListener('load', () => {
-  const animator = new AnimationController();
-  
-  // Example of how to adjust properties:
-  // animator.setCircleRadius(25);
-  // animator.setTriangleSize(30);
-  // animator.setCircleColor('#FF0000');
-  // animator.setTriangleColor('#00FF00');
-});
-</script>
     
     <nav class="navbar">
     <a href="#work">Work</a>
@@ -397,5 +199,74 @@ An online Marketplace, Community and Awareness program to support the small scal
     </section>
 </section>
     </main>
+
+    class AnimationController {
+    constructor() {
+        this.circle = document.getElementById('animCircle');
+        this.triangle = document.getElementById('animTriangle');
+        this.startTime = Date.now();
+        this.isAnimating = false;
+        
+        // Customizable properties
+        this.circleRadius = 25;            // Increased circle size
+        this.triangleSize = 30;            // Increased triangle size
+        this.followDistance = 50;          // Distance between shapes
+        this.animationDuration = 3000;
+        
+        // Initialize
+        this.circle.setAttribute('r', this.circleRadius);
+        this.init();
+    }
+    
+    // ... [Previous methods remain the same until updateTrianglePosition] ...
+
+    updateTrianglePosition(circleX, circleY, prevX, prevY) {
+        const angle = Math.atan2(circleY - prevY, circleX - prevX);
+        // Increased distance between circle and triangle
+        const trianglePoints = this.calculateTrianglePoints(
+            circleX - Math.cos(angle) * (this.circleRadius + this.followDistance),
+            circleY - Math.sin(angle) * (this.circleRadius + this.followDistance),
+            angle
+        );
+        this.triangle.setAttribute('d', trianglePoints);
+    }
+
+    calculateTrianglePoints(x, y, angle) {
+        const points = [
+            { x: -this.triangleSize, y: -this.triangleSize/1.5 },  // Adjusted for sharper triangle
+            { x: -this.triangleSize, y: this.triangleSize/1.5 },
+            { x: this.triangleSize, y: 0 }
+        ];
+        
+        const rotatedPoints = points.map(p => ({
+            x: x + (p.x * Math.cos(angle) - p.y * Math.sin(angle)),
+            y: y + (p.x * Math.sin(angle) + p.y * Math.cos(angle))
+        }));
+        
+        return `M ${rotatedPoints[0].x},${rotatedPoints[0].y} 
+                L ${rotatedPoints[1].x},${rotatedPoints[1].y} 
+                L ${rotatedPoints[2].x},${rotatedPoints[2].y} Z`;
+    }
+
+    // Add new method to adjust follow distance
+    setFollowDistance(distance) {
+        this.followDistance = distance;
+    }
+
+    // ... [Rest of the previous methods remain the same] ...
+}
+
+// Initialize the animation with custom properties
+window.addEventListener('load', () => {
+    const animator = new AnimationController();
+    
+    // Customize the animation properties
+    animator.setCircleRadius(25);           // Larger circle
+    animator.setTriangleSize(30);           // Larger triangle
+    animator.setFollowDistance(50);         // Distance between shapes
+    animator.setCircleColor('#4A90E2');     // Circle color
+    animator.setTriangleColor('#E24A90');   // Triangle color
+});
+    
 </body>
 </html>
