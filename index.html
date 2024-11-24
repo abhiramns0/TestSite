@@ -145,13 +145,13 @@ class AnimationController {
                         ((this.maxGap + this.minGap) / 2);
     
     // Add some independent movement to triangle
-  //  const independentOffset = {
-  //    x: Math.sin(progress * Math.PI * 3) * 20,
-   //   y: Math.cos(progress * Math.PI * 4) * 20
-  //  };
+    const independentOffset = {
+      x: Math.sin(progress * Math.PI * 3) * 20,
+      y: Math.cos(progress * Math.PI * 4) * 20
+    };
     
-  //  const targetX = circleX - Math.cos(angle) * gapVariation + independentOffset.x;
-  //  const targetY = circleY - Math.sin(angle) * gapVariation + independentOffset.y;
+    const targetX = circleX - Math.cos(angle) * gapVariation + independentOffset.x;
+    const targetY = circleY - Math.sin(angle) * gapVariation + independentOffset.y;
     
     // Smoothly interpolate triangle position
     this.triangleX = this.triangleX || targetX;
