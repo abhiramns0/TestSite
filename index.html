@@ -9,7 +9,7 @@
 </head>
 <body>
 
-  <style>
+ <style>
 .animation-container {
   position: fixed;
   top: 0;
@@ -58,8 +58,11 @@ class AnimationController {
     // Animation settings
     this.circleRadius = 20;
     this.triangleSize = 25;
-    this.animationDuration = 5000;
-    this.followGap = 40; // New property for gap between shapes
+    this.animationDuration = 6000;
+    this.minGap = 30;
+    this.maxGap = 80;
+    this.triangleDelay = 0; // Dynamic delay for triangle
+    this.triangleProgress = 0; // Separate progress for triangle
     
     this.init();
   }
@@ -69,59 +72,101 @@ class AnimationController {
   }
   
   generateRandomPath() {
+    const startSide = Math.floor(Math.random() * 4); // 0: left, 1: right, 2: top, 3: bottom
+    const endSide = (startSide + 2) % 4; // Opposite side
+    
+    const getRandomPoint = (side) => {
+      switch(side) {
+        case 0: return { x: -50, y: Math.random() * window.innerHeight };
+        case 1: return { x: window.innerWidth + 50, y: Math.random() * window.innerHeight };
+        case 2: return { x: Math.random() * window.innerWidth, y: -50 };
+        case 3: return { x: Math.random() * window.innerWidth, y: window.innerHeight + 50 };
+      }
+    };
+    
+    const start = getRandomPoint(startSide);
+    const end = getRandomPoint(endSide);
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
-    const radiusX = window.innerWidth * 0.3;
-    const radiusY = window.innerHeight * 0.3;
     
-    // Generate multiple control points for a more complex path
-    const numPoints = 5;
-    const points = [];
+    // Generate control points for a more complex path
+    const points = [start];
+    const numPoints = 6;
     
-    for (let i = 0; i <= numPoints; i++) {
-      const angle = (i / numPoints) * Math.PI * 2;
-      const randomOffset = Math.random() * 100 - 50;
+    for (let i = 1; i < numPoints - 1; i++) {
+      const progress = i / (numPoints - 1);
+      const baseX = start.x + (end.x - start.x) * progress;
+      const baseY = start.y + (end.y - start.y) * progress;
+      
+      // Add circular deviation from straight line
+      const radius = Math.min(window.innerWidth, window.innerHeight) * 0.3;
+      const angle = Math.PI * 2 * progress + Math.random() * Math.PI;
       
       points.push({
-        x: centerX + Math.cos(angle) * (radiusX + randomOffset),
-        y: centerY + Math.sin(angle) * (radiusY + randomOffset)
+        x: baseX + Math.cos(angle) * radius * Math.sin(progress * Math.PI),
+        y: baseY + Math.sin(angle) * radius * Math.sin(progress * Math.PI),
+        speedMultiplier: 0.5 + Math.random() * 1.5 // Random speed for each segment
       });
     }
     
-    // Add some spiral effect
-    points.forEach((point, i) => {
-      const spiralFactor = 1 + (i / numPoints) * 0.5;
-      point.x = centerX + (point.x - centerX) * spiralFactor;
-      point.y = centerY + (point.y - centerY) * spiralFactor;
-    });
-    
+    points.push(end);
     return points;
   }
   
   calculatePointOnPath(progress, points) {
     const numSegments = points.length - 1;
-    const segment = Math.floor(progress * numSegments);
+    let segment = Math.floor(progress * numSegments);
+    segment = Math.min(segment, numSegments - 1);
     const segmentProgress = (progress * numSegments) % 1;
     
     const p0 = points[segment];
     const p1 = points[segment + 1];
     
-    // Add some oscillation
-    const oscillation = Math.sin(progress * Math.PI * 4) * 20;
+    // Apply speed multiplier to segment
+    const speedMult = p0.speedMultiplier || 1;
+    const adjustedProgress = Math.sin(segmentProgress * Math.PI * speedMult) * 0.5 + 0.5;
+    
+    // Add oscillation
+    const oscillation = Math.sin(progress * Math.PI * 6) * 15;
     
     return {
-      x: p0.x + (p1.x - p0.x) * segmentProgress + Math.cos(progress * Math.PI * 8) * oscillation,
-      y: p0.y + (p1.y - p0.y) * segmentProgress + Math.sin(progress * Math.PI * 8) * oscillation
+      x: p0.x + (p1.x - p0.x) * adjustedProgress + Math.cos(progress * Math.PI * 4) * oscillation,
+      y: p0.y + (p1.y - p0.y) * adjustedProgress + Math.sin(progress * Math.PI * 4) * oscillation
     };
   }
   
-  updateTrianglePosition(circleX, circleY, prevX, prevY) {
-    const angle = Math.atan2(circleY - prevY, circleX - prevX);
+  updateTrianglePosition(circleX, circleY, progress) {
+    // Calculate desired position based on circle's position
+    const angle = Math.atan2(circleY - this.prevY, circleX - this.prevX);
+    
+    // Dynamic gap that varies with sine wave
+    const gapVariation = Math.sin(progress * Math.PI * 4) * 
+                        ((this.maxGap - this.minGap) / 2) + 
+                        ((this.maxGap + this.minGap) / 2);
+    
+    // Add some independent movement to triangle
+    const independentOffset = {
+      x: Math.sin(progress * Math.PI * 3) * 20,
+      y: Math.cos(progress * Math.PI * 4) * 20
+    };
+    
+    const targetX = circleX - Math.cos(angle) * gapVariation + independentOffset.x;
+    const targetY = circleY - Math.sin(angle) * gapVariation + independentOffset.y;
+    
+    // Smoothly interpolate triangle position
+    this.triangleX = this.triangleX || targetX;
+    this.triangleY = this.triangleY || targetY;
+    
+    const easing = 0.15;
+    this.triangleX += (targetX - this.triangleX) * easing;
+    this.triangleY += (targetY - this.triangleY) * easing;
+    
     const trianglePoints = this.calculateTrianglePoints(
-      circleX - Math.cos(angle) * (this.circleRadius + this.followGap),
-      circleY - Math.sin(angle) * (this.circleRadius + this.followGap),
-      angle
+      this.triangleX,
+      this.triangleY,
+      angle + Math.sin(progress * Math.PI * 2) * 0.2 // Add slight rotation
     );
+    
     this.triangle.setAttribute('d', trianglePoints);
   }
   
@@ -149,8 +194,8 @@ class AnimationController {
     this.isAnimating = true;
     const pathPoints = this.generateRandomPath();
     const startTime = performance.now();
-    let prevX = pathPoints[0].x;
-    let prevY = pathPoints[0].y;
+    this.prevX = pathPoints[0].x;
+    this.prevY = pathPoints[0].y;
     
     this.circle.style.opacity = 1;
     this.triangle.style.opacity = 1;
@@ -169,15 +214,17 @@ class AnimationController {
       // Add easing
       progress = 0.5 - Math.cos(progress * Math.PI) / 2;
       
+      // Update circle position
       const pos = this.calculatePointOnPath(progress, pathPoints);
-      
       this.circle.setAttribute('cx', pos.x);
       this.circle.setAttribute('cy', pos.y);
       
-      this.updateTrianglePosition(pos.x, pos.y, prevX, prevY);
+      // Update triangle with its own timing
+      this.triangleProgress += (progress - this.triangleProgress) * 0.1;
+      this.updateTrianglePosition(pos.x, pos.y, this.triangleProgress);
       
-      prevX = pos.x;
-      prevY = pos.y;
+      this.prevX = pos.x;
+      this.prevY = pos.y;
       
       requestAnimationFrame(animate);
     };
@@ -192,7 +239,6 @@ class AnimationController {
     }
   }
   
-  // Public methods
   setCircleRadius(radius) {
     this.circleRadius = radius;
     this.circle.setAttribute('r', radius);
@@ -210,48 +256,21 @@ class AnimationController {
     this.triangle.style.fill = color;
   }
   
-  // New method to adjust the gap
-  setFollowGap(gap) {
-    this.followGap = gap;
+  setGapRange(min, max) {
+    this.minGap = min;
+    this.maxGap = max;
   }
 }
 
-// Initialize the animation
 window.addEventListener('load', () => {
   const animator = new AnimationController();
   
-  // Example configuration
   animator.setCircleRadius(20);
   animator.setTriangleSize(25);
-  animator.setFollowGap(40); // Set the gap between shapes
+  animator.setGapRange(30, 80);
   animator.setCircleColor('#4A90E2');
   animator.setTriangleColor('#E24A90');
 });
-</script>
-    
-    <nav class="navbar">
-    <a href="#work">Work</a>
-    <a href="#about">About</a>
-    <a href="https://drive.google.com/file/d/137oiF-6MtJzSn1vhQD5wgykKUSkIyFAO/view?usp=sharing" target="_blank">Resume</a>
-</nav>
-    <main>
-        <div class="hero-section">
-            <h1><span class="light">Hi, I am</span> <span class="name">Abhiram</span></h1>
-            <p class="hero-description">I design intuitive experiences that seamlessly connect user needs with the magic of technology, driven by curiosity and a passion for innovation</p>
-
-        
-    <div class="scroll-indicator">
-        <div class="hover-circle"></div>
-        <svg class="arrow-down" width="20" height="40" viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 2L20 38M20 38L38 20M20 38L2 20" stroke="#CDCDCD" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-    </div>
-            <script>
-    document.querySelector('.scroll-indicator').addEventListener('click', function() {
-        document.querySelector('#work').scrollIntoView({ 
-            behavior: 'smooth'
-        });
-    });
 </script>
 
 
