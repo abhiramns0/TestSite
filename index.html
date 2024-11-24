@@ -152,9 +152,9 @@ class AnimationController {
       control1: controlPoint1,
       control2: controlPoint2,
       speedFactors: {
-        start: 1 - Math.random() * this.config.speedVariation,
-        mid: 1 - Math.random() * this.config.speedVariation,
-        end: 1 - Math.random() * this.config.speedVariation
+        start: 1 - Math.random() * this.config.speedVariation * 0.5,
+        mid: 1,
+        end: 1 - Math.random() * this.config.speedVariation * 0.5
       }
     };
   }
@@ -238,11 +238,18 @@ class AnimationController {
         return;
       }
       
-      const speedFactor = progress < 0.3 ? path.speedFactors.start :
-                         progress < 0.7 ? path.speedFactors.mid :
-                         path.speedFactors.end;
-      
-      progress = 0.5 - 0.5 * Math.cos(progress * Math.PI * speedFactor);
+      let currentSpeedFactor;
+if (progress < 0.3) {
+    currentSpeedFactor = smoothInterpolate(path.speedFactors.start, path.speedFactors.mid, progress / 0.3);
+} else if (progress < 0.7) {
+    currentSpeedFactor = path.speedFactors.mid;
+} else {
+    currentSpeedFactor = smoothInterpolate(path.speedFactors.mid, path.speedFactors.end, (progress - 0.7) / 0.3);
+}
+
+// Apply smoother easing
+progress = 0.5 - 0.5 * Math.cos(progress * Math.PI);
+progress = progress * (0.8 + currentSpeedFactor * 0.2);
       
       const pos = this.getBezierPoint(
         progress,
