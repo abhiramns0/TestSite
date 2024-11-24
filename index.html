@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <style>
+  <style>
 .animation-container {
   position: fixed;
   top: 0;
@@ -31,11 +31,11 @@
 }
 
 #animCircle {
-  fill: #0004FF;
+  fill: #4A90E2;
 }
 
 #animTriangle {
-  fill: #FF0000;
+  fill: #E24A90;
 }
 </style>
 </head>
@@ -56,57 +56,70 @@ class AnimationController {
     this.isAnimating = false;
     
     // Animation settings
-    this.circleRadius = 10;
-    this.triangleSize = 15;
-    this.animationDuration = 2000;
+    this.circleRadius = 20;
+    this.triangleSize = 25;
+    this.animationDuration = 5000;
+    this.followGap = 40; // New property for gap between shapes
     
     this.init();
   }
   
   init() {
-    // Start checking for animation triggers
     setInterval(() => this.checkTiming(), 100);
   }
   
   generateRandomPath() {
-    const startX = -50;
-    const startY = 100;
-    const endX = window.innerWidth + 50;
-    const endY = 500;
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const radiusX = window.innerWidth * 0.3;
+    const radiusY = window.innerHeight * 0.3;
     
-    // Generate control points for bezier curve
-    const cp1x = Math.random() * window.innerWidth * 0.3 + window.innerWidth * 0.2;
-    const cp1y = Math.random() * 300 + 100;
-    const cp2x = Math.random() * window.innerWidth * 0.3 + window.innerWidth * 0.5;
-    const cp2y = Math.random() * 300 + 200;
+    // Generate multiple control points for a more complex path
+    const numPoints = 5;
+    const points = [];
     
-    return {
-      start: { x: startX, y: startY },
-      end: { x: endX, y: endY },
-      cp1: { x: cp1x, y: cp1y },
-      cp2: { x: cp2x, y: cp2y }
-    };
+    for (let i = 0; i <= numPoints; i++) {
+      const angle = (i / numPoints) * Math.PI * 2;
+      const randomOffset = Math.random() * 100 - 50;
+      
+      points.push({
+        x: centerX + Math.cos(angle) * (radiusX + randomOffset),
+        y: centerY + Math.sin(angle) * (radiusY + randomOffset)
+      });
+    }
+    
+    // Add some spiral effect
+    points.forEach((point, i) => {
+      const spiralFactor = 1 + (i / numPoints) * 0.5;
+      point.x = centerX + (point.x - centerX) * spiralFactor;
+      point.y = centerY + (point.y - centerY) * spiralFactor;
+    });
+    
+    return points;
   }
   
-  calculatePointOnCurve(t, path) {
-    const { start, end, cp1, cp2 } = path;
+  calculatePointOnPath(progress, points) {
+    const numSegments = points.length - 1;
+    const segment = Math.floor(progress * numSegments);
+    const segmentProgress = (progress * numSegments) % 1;
+    
+    const p0 = points[segment];
+    const p1 = points[segment + 1];
+    
+    // Add some oscillation
+    const oscillation = Math.sin(progress * Math.PI * 4) * 20;
+    
     return {
-      x: Math.pow(1-t, 3) * start.x + 
-         3 * Math.pow(1-t, 2) * t * cp1.x + 
-         3 * (1-t) * Math.pow(t, 2) * cp2.x + 
-         Math.pow(t, 3) * end.x,
-      y: Math.pow(1-t, 3) * start.y + 
-         3 * Math.pow(1-t, 2) * t * cp1.y + 
-         3 * (1-t) * Math.pow(t, 2) * cp2.y + 
-         Math.pow(t, 3) * end.y
+      x: p0.x + (p1.x - p0.x) * segmentProgress + Math.cos(progress * Math.PI * 8) * oscillation,
+      y: p0.y + (p1.y - p0.y) * segmentProgress + Math.sin(progress * Math.PI * 8) * oscillation
     };
   }
   
   updateTrianglePosition(circleX, circleY, prevX, prevY) {
     const angle = Math.atan2(circleY - prevY, circleX - prevX);
     const trianglePoints = this.calculateTrianglePoints(
-      circleX - Math.cos(angle) * (this.circleRadius + 20),
-      circleY - Math.sin(angle) * (this.circleRadius + 20),
+      circleX - Math.cos(angle) * (this.circleRadius + this.followGap),
+      circleY - Math.sin(angle) * (this.circleRadius + this.followGap),
       angle
     );
     this.triangle.setAttribute('d', trianglePoints);
@@ -134,12 +147,11 @@ class AnimationController {
     if (this.isAnimating) return;
     
     this.isAnimating = true;
-    const path = this.generateRandomPath();
+    const pathPoints = this.generateRandomPath();
     const startTime = performance.now();
-    let prevX = path.start.x;
-    let prevY = path.start.y;
+    let prevX = pathPoints[0].x;
+    let prevY = pathPoints[0].y;
     
-    // Show shapes
     this.circle.style.opacity = 1;
     this.triangle.style.opacity = 1;
     
@@ -154,17 +166,14 @@ class AnimationController {
         return;
       }
       
-      // Add some randomness to the speed
-      progress += (Math.sin(progress * Math.PI * 4) * 0.1);
-      progress = Math.max(0, Math.min(1, progress));
+      // Add easing
+      progress = 0.5 - Math.cos(progress * Math.PI) / 2;
       
-      const pos = this.calculatePointOnCurve(progress, path);
+      const pos = this.calculatePointOnPath(progress, pathPoints);
       
-      // Update circle position
       this.circle.setAttribute('cx', pos.x);
       this.circle.setAttribute('cy', pos.y);
       
-      // Update triangle position
       this.updateTrianglePosition(pos.x, pos.y, prevX, prevY);
       
       prevX = pos.x;
@@ -183,7 +192,7 @@ class AnimationController {
     }
   }
   
-  // Public methods to adjust properties
+  // Public methods
   setCircleRadius(radius) {
     this.circleRadius = radius;
     this.circle.setAttribute('r', radius);
@@ -200,17 +209,23 @@ class AnimationController {
   setTriangleColor(color) {
     this.triangle.style.fill = color;
   }
+  
+  // New method to adjust the gap
+  setFollowGap(gap) {
+    this.followGap = gap;
+  }
 }
 
-// Initialize the animation when the page loads
+// Initialize the animation
 window.addEventListener('load', () => {
   const animator = new AnimationController();
   
-  // Example of how to adjust properties:
-  // animator.setCircleRadius(25);
-  // animator.setTriangleSize(30);
-  // animator.setCircleColor('#FF0000');
-  // animator.setTriangleColor('#00FF00');
+  // Example configuration
+  animator.setCircleRadius(20);
+  animator.setTriangleSize(25);
+  animator.setFollowGap(40); // Set the gap between shapes
+  animator.setCircleColor('#4A90E2');
+  animator.setTriangleColor('#E24A90');
 });
 </script>
     
