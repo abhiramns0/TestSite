@@ -152,9 +152,9 @@ class AnimationController {
       control1: controlPoint1,
       control2: controlPoint2,
       speedFactors: {
-        start: 1 - Math.random() * this.config.speedVariation * 0.5,
-        mid: 1,
-        end: 1 - Math.random() * this.config.speedVariation * 0.5
+        start: 1 - Math.random() * this.config.speedVariation,
+        mid: 1 - Math.random() * this.config.speedVariation,
+        end: 1 - Math.random() * this.config.speedVariation
       }
     };
   }
@@ -238,17 +238,11 @@ class AnimationController {
         return;
       }
       
-      let currentSpeedFactor = 1;
-if (progress < 0.3) {
-    currentSpeedFactor = smoothInterpolate(path.speedFactors.start, path.speedFactors.mid, progress / 0.3);
-} else if (progress < 0.7) {
-    currentSpeedFactor = path.speedFactors.mid;
-} else {
-    currentSpeedFactor = smoothInterpolate(path.speedFactors.mid, path.speedFactors.end, (progress - 0.7) / 0.3);
-}
-
-// Modify the final progress calculation
-progress = progress * currentSpeedFactor;
+      const speedFactor = progress < 0.3 ? path.speedFactors.start :
+                         progress < 0.7 ? path.speedFactors.mid :
+                         path.speedFactors.end;
+      
+      progress = 0.5 - 0.5 * Math.cos(progress * Math.PI * speedFactor);
       
       const pos = this.getBezierPoint(
         progress,
@@ -277,18 +271,23 @@ window.addEventListener('load', () => {
   const animator = new AnimationController({
     circleRadius: 20,
     triangleSize: 25,
-    animationDuration: 3000,
+    animationDuration: 4000,
     minGap: 30,
-    maxGap: 100,
-    gapVariationSpeed: 2,
-    pathRandomness: 0.5,
-    speedVariation: 0.3,
+    maxGap: 60,
+    gapVariationSpeed: 1,
+    pathRandomness: 0.3,
+    speedVariation: 0.2,
     centerAttractionForce: 0.5,
     scrollCooldown: 5000,
     firstScrollDelay: 1000
   });
 });
 </script>
+
+<!-- Add this for testing scrolling -->
+<div style="height: 200vh; padding: 20px;">
+  Scroll content
+</div>
 
     <nav class="navbar">
     <a href="#work">Work</a>
