@@ -86,8 +86,8 @@ main {
 /* Style for the hover circle */
 .hover-circle {
     position: absolute;
-    width: 50px;
-    height: 50px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     background-color: #696969;
     opacity: 0;
@@ -99,8 +99,8 @@ main {
 
 /* Show circle and add shadow on hover */
 .scroll-indicator:hover .hover-circle {
-    opacity: 10;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    opacity: 5;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
 /* Adjust arrow position to be centered over circle */
