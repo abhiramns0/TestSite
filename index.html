@@ -1,5 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
+     <style>
+    .animation-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    #animationSvg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .shape {
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    #animCircle {
+      fill: #4A90E2;
+    }
+
+    #animTriangle {
+      fill: #E24A90;
+    }
+  </style>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +39,13 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+    <div class="animation-container">
+    <svg id="animationSvg" preserveAspectRatio="none">
+      <circle id="animCircle" class="shape" r="20" />
+      <polygon id="animTriangle" class="shape" points="0,0 20,-35 -20,-35" />
+    </svg>
+  </div>
 
   <style>
     .animation-container {
@@ -59,8 +97,6 @@
         this.circleRadius = 20;
         this.triangleSize = 25;
         this.animationDuration = 3000;
-        this.minGap = 30;
-        this.maxGap = 80;
 
         this.init();
       }
@@ -84,43 +120,8 @@
 
         const start = getRandomPoint(startSide);
         const end = getRandomPoint(endSide);
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
 
-        const points = [start];
-        const numPoints = 6;
-
-        for (let i = 1; i < numPoints - 1; i++) {
-          const progress = i / (numPoints - 1);
-          const baseX = start.x + (end.x - start.x) * progress;
-          const baseY = start.y + (end.y - start.y) * progress;
-
-          const radius = Math.min(window.innerWidth, window.innerHeight) * 0.3;
-          const angle = Math.PI * 2 * progress + Math.random() * Math.PI;
-
-          points.push({
-            x: baseX + Math.cos(angle) * radius * Math.sin(progress * Math.PI),
-            y: baseY + Math.sin(angle) * radius * Math.sin(progress * Math.PI)
-          });
-        }
-
-        points.push(end);
-        return points;
-      }
-
-      calculatePointOnPath(progress, points) {
-        const numSegments = points.length - 1;
-        let segment = Math.floor(progress * numSegments);
-        segment = Math.min(segment, numSegments - 1);
-        const segmentProgress = (progress * numSegments) % 1;
-
-        const p0 = points[segment];
-        const p1 = points[segment + 1];
-
-        return {
-          x: p0.x + (p1.x - p0.x) * segmentProgress,
-          y: p0.y + (p1.y - p0.y) * segmentProgress
-        };
+        return [start, end];
       }
 
       animate() {
@@ -150,10 +151,24 @@
           this.circle.setAttribute('cx', pos.x);
           this.circle.setAttribute('cy', pos.y);
 
+          this.triangle.setAttribute(
+            'transform',
+            `translate(${pos.x}, ${pos.y})`
+          );
+
           requestAnimationFrame(animate);
         };
 
         requestAnimationFrame(animate);
+      }
+
+      calculatePointOnPath(progress, points) {
+        const start = points[0];
+        const end = points[1];
+        return {
+          x: start.x + (end.x - start.x) * progress,
+          y: start.y + (end.y - start.y) * progress,
+        };
       }
 
       checkTiming() {
