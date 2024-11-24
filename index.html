@@ -238,7 +238,7 @@ class AnimationController {
         return;
       }
       
-      let currentSpeedFactor;
+      let currentSpeedFactor = 1;
 if (progress < 0.3) {
     currentSpeedFactor = smoothInterpolate(path.speedFactors.start, path.speedFactors.mid, progress / 0.3);
 } else if (progress < 0.7) {
@@ -247,9 +247,8 @@ if (progress < 0.3) {
     currentSpeedFactor = smoothInterpolate(path.speedFactors.mid, path.speedFactors.end, (progress - 0.7) / 0.3);
 }
 
-// Apply smoother easing
-progress = 0.5 - 0.5 * Math.cos(progress * Math.PI);
-progress = progress * (0.8 + currentSpeedFactor * 0.2);
+// Modify the final progress calculation
+progress = progress * currentSpeedFactor;
       
       const pos = this.getBezierPoint(
         progress,
