@@ -99,8 +99,8 @@ main {
 
 /* Show circle and add shadow on hover */
 .scroll-indicator:hover .hover-circle {
-    opacity: 1;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    opacity: 10;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 /* Adjust arrow position to be centered over circle */
