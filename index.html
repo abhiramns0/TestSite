@@ -8,10 +8,10 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 
-  <div class="animation-container">
+<div class="animation-container">
   <svg id="animationSvg" preserveAspectRatio="none">
-    <circle id="animCircle" class="shape" r="20" />
     <path id="animTriangle" class="shape" />
+    <circle id="animCircle" class="shape" r="20" />
   </svg>
 </div>
 
@@ -45,13 +45,6 @@
 }
 </style>
 
-<div class="animation-container">
-  <svg id="animationSvg" preserveAspectRatio="none">
-    <circle id="animCircle" class="shape" r="20" />
-    <path id="animTriangle" class="shape" />
-  </svg>
-</div>
-
 <script>
 class AnimationController {
   constructor() {
@@ -67,12 +60,16 @@ class AnimationController {
     this.maxGap = 200;
     this.lastScrollPosition = window.scrollY;
     this.lastAnimationTime = 0;
+    this.scrollCount = 0;
+    
+    // Speed settings - adjust these values to change speeds
+    this.circleSpeed = 1.0;  // Default speed
+    this.triangleSpeed = 0.7;  // Slightly slower than circle
     
     this.init();
   }
   
   init() {
-    // Throttled scroll handler
     let scrollTimeout;
     window.addEventListener('scroll', () => {
       if (scrollTimeout) {
@@ -89,46 +86,61 @@ class AnimationController {
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const now = Date.now();
     
-    // Check if we're at the top or bottom and if enough time has passed
     if (now - this.lastAnimationTime >= 5000) {
       if (
         (currentScroll <= 0 && this.lastScrollPosition > currentScroll) ||
         (currentScroll >= maxScroll && this.lastScrollPosition < currentScroll)
       ) {
+        this.scrollCount++;
         this.lastAnimationTime = now;
-        this.animate();
+        
+        // Special animation for first scroll
+        if (this.scrollCount === 1) {
+          this.animate('spiral');
+        } else {
+          this.animate('normal');
+        }
       }
     }
     
     this.lastScrollPosition = currentScroll;
   }
 
-  generatePath() {
+  generatePath(type = 'normal') {
     const width = window.innerWidth;
     const height = window.innerHeight;
     const centerX = width / 2;
     const centerY = height / 2;
     
-    // Randomly choose start and end points from screen edges
+    if (type === 'spiral') {
+      return {
+        start: { x: centerX, y: centerY },
+        end: { x: width + 50, y: height / 2 },
+        control1: {
+          x: centerX + width * 0.25,
+          y: centerY - height * 0.25
+        },
+        control2: {
+          x: centerX + width * 0.4,
+          y: centerY + height * 0.4
+        }
+      };
+    }
+    
     const startPoint = this.getEdgePoint();
-    const endPoint = this.getEdgePoint(true); // Get opposite edge
-    
-    // Create a curved path through the center
-    const controlPoint1 = {
-      x: centerX + (Math.random() - 0.5) * width * 0.3,
-      y: centerY + (Math.random() - 0.5) * height * 0.3
-    };
-    
-    const controlPoint2 = {
-      x: centerX + (Math.random() - 0.5) * width * 0.3,
-      y: centerY + (Math.random() - 0.5) * height * 0.3
-    };
+    const endPoint = this.getEdgePoint(true);
     
     return {
       start: startPoint,
       end: endPoint,
-      control1: controlPoint1,
-      control2: controlPoint2
+      control1: {
+        x: centerX + (Math.random() - 0.5) * width * 0.3,
+        y: centerY + (Math.random() - 0.5) * height * 0.3
+      },
+      control2: {
+        x: centerX + (Math.random() - 0.5) * width * 0.3,
+        y: centerY + (Math.random() - 0.5) * height * 0.3
+      }
     };
   }
   
@@ -139,10 +151,10 @@ class AnimationController {
     this.startSide = side;
     
     switch(side) {
-      case 0: return { x: -50, y: height * Math.random() }; // Left
-      case 1: return { x: width + 50, y: height * Math.random() }; // Right
-      case 2: return { x: width * Math.random(), y: -50 }; // Top
-      case 3: return { x: width * Math.random(), y: height + 50 }; // Bottom
+      case 0: return { x: -50, y: height * Math.random() };
+      case 1: return { x: width + 50, y: height * Math.random() };
+      case 2: return { x: width * Math.random(), y: -50 };
+      case 3: return { x: width * Math.random(), y: height + 50 };
     }
   }
   
@@ -183,11 +195,11 @@ class AnimationController {
     `);
   }
   
-  animate() {
+  animate(pathType = 'normal') {
     if (this.isAnimating) return;
     
     this.isAnimating = true;
-    const path = this.generatePath();
+    const path = this.generatePath(pathType);
     const startTime = performance.now();
     let prevX = path.start.x;
     let prevY = path.start.y;
@@ -197,32 +209,43 @@ class AnimationController {
     
     const animate = (currentTime) => {
       const elapsed = currentTime - startTime;
-      let progress = elapsed / this.animationDuration;
       
-      if (progress >= 1) {
+      // Calculate separate progress for circle and triangle based on their speeds
+      let circleProgress = (elapsed / this.animationDuration) * this.circleSpeed;
+      let triangleProgress = (elapsed / this.animationDuration) * this.triangleSpeed;
+      
+      if (circleProgress >= 1 && triangleProgress >= 1) {
         this.isAnimating = false;
         this.circle.style.opacity = 0;
         this.triangle.style.opacity = 0;
         return;
       }
       
-      // Smooth easing
-      progress = 0.5 - 0.5 * Math.cos(progress * Math.PI);
+      // Update positions with individual progress
+      if (triangleProgress < 1) {
+        const trianglePos = this.getBezierPoint(
+          Math.min(triangleProgress, 1),
+          path.start,
+          path.control1,
+          path.control2,
+          path.end
+        );
+        this.updateTrianglePosition(trianglePos.x, trianglePos.y, prevX, prevY);
+        prevX = trianglePos.x;
+        prevY = trianglePos.y;
+      }
       
-      const pos = this.getBezierPoint(
-        progress,
-        path.start,
-        path.control1,
-        path.control2,
-        path.end
-      );
-      
-      this.circle.setAttribute('cx', pos.x);
-      this.circle.setAttribute('cy', pos.y);
-      this.updateTrianglePosition(pos.x, pos.y, prevX, prevY);
-      
-      prevX = pos.x;
-      prevY = pos.y;
+      if (circleProgress < 1) {
+        const circlePos = this.getBezierPoint(
+          Math.min(circleProgress, 1),
+          path.start,
+          path.control1,
+          path.control2,
+          path.end
+        );
+        this.circle.setAttribute('cx', circlePos.x);
+        this.circle.setAttribute('cy', circlePos.y);
+      }
       
       requestAnimationFrame(animate);
     };
