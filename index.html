@@ -55,7 +55,7 @@ class AnimationController {
     // Animation settings
     this.circleRadius = 10;
     this.triangleSize = 20;
-    this.animationDuration = 4000;
+    this.animationDuration = 2000;
     this.minGap = 80;
     this.maxGap = 200;
     this.lastScrollPosition = window.scrollY;
@@ -65,10 +65,6 @@ class AnimationController {
     this.circleSpeed = 1.0;
     this.triangleSpeed = 0.7;
     
-    // Track if timed animations have played
-    this.hasPlayedInitial = false;
-    this.hasPlayed60s = false;
-    
     this.init();
   }
   
@@ -76,10 +72,9 @@ class AnimationController {
     // Trigger initial animation after 5 seconds
     setTimeout(() => {
       this.animate('normal');
-      this.hasPlayedInitial = true;
     }, 5000);
 
-    // Trigger second animation at 60 seconds
+      // Trigger second animation at 60 seconds
     setTimeout(() => {
       if (!this.isAnimating) {
         this.animate('normal');
