@@ -74,6 +74,25 @@ class AnimationController {
       this.animate('normal');
     }, 5000);
 
+      // Trigger second animation at 11 seconds
+    setTimeout(() => {
+      if (!this.isAnimating) {
+        this.animate('normal');
+        this.hasPlayed11s = true;
+      } else {
+        // If currently animating, wait and try again
+        const checkAndAnimate = () => {
+          if (!this.isAnimating && !this.hasPlayed60s) {
+            this.animate('normal');
+            this.hasPlayed11s = true;
+          } else if (!this.hasPlayed11s) {
+            setTimeout(checkAndAnimate, 100);
+          }
+        };
+        setTimeout(checkAndAnimate, 100);
+      }
+    }, 11000);
+      
       // Trigger second animation at 60 seconds
     setTimeout(() => {
       if (!this.isAnimating) {
