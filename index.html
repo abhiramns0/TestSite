@@ -55,21 +55,25 @@ class AnimationController {
     // Animation settings
     this.circleRadius = 10;
     this.triangleSize = 20;
-    this.animationDuration = 2000;
+    this.animationDuration = 4000;
     this.minGap = 80;
     this.maxGap = 200;
     this.lastScrollPosition = window.scrollY;
     this.lastAnimationTime = 0;
-    this.scrollCount = 0;
     
-    // Speed settings - adjust these values to change speeds
-    this.circleSpeed = 1.0;  // Default speed
-    this.triangleSpeed = 0.7;  // Slightly slower than circle
+    // Speed settings
+    this.circleSpeed = 1.0;
+    this.triangleSpeed = 0.7;
     
     this.init();
   }
   
   init() {
+    // Trigger initial animation after 5 seconds
+    setTimeout(() => {
+      this.animate('normal');
+    }, 5000);
+
     let scrollTimeout;
     window.addEventListener('scroll', () => {
       if (scrollTimeout) {
@@ -91,15 +95,8 @@ class AnimationController {
         (currentScroll <= 0 && this.lastScrollPosition > currentScroll) ||
         (currentScroll >= maxScroll && this.lastScrollPosition < currentScroll)
       ) {
-        this.scrollCount++;
         this.lastAnimationTime = now;
-        
-        // Special animation for first scroll
-        if (this.scrollCount === 1) {
-          this.animate('spiral');
-        } else {
-          this.animate('normal');
-        }
+        this.animate('normal');
       }
     }
     
@@ -109,26 +106,14 @@ class AnimationController {
   generatePath(type = 'normal') {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const centerX = width / 2;
-    const centerY = height / 2;
     
-    if (type === 'spiral') {
-      return {
-        start: { x: centerX, y: centerY },
-        end: { x: width + 50, y: height / 2 },
-        control1: {
-          x: centerX + width * 0.25,
-          y: centerY - height * 0.25
-        },
-        control2: {
-          x: centerX + width * 0.4,
-          y: centerY + height * 0.4
-        }
-      };
-    }
-    
+    // Always get random edge points for start and end
     const startPoint = this.getEdgePoint();
     const endPoint = this.getEdgePoint(true);
+    
+    // Control points for smooth curve
+    const centerX = width / 2;
+    const centerY = height / 2;
     
     return {
       start: startPoint,
@@ -151,10 +136,10 @@ class AnimationController {
     this.startSide = side;
     
     switch(side) {
-      case 0: return { x: -50, y: height * Math.random() };
-      case 1: return { x: width + 50, y: height * Math.random() };
-      case 2: return { x: width * Math.random(), y: -50 };
-      case 3: return { x: width * Math.random(), y: height + 50 };
+      case 0: return { x: -50, y: height * Math.random() }; // Left
+      case 1: return { x: width + 50, y: height * Math.random() }; // Right
+      case 2: return { x: width * Math.random(), y: -50 }; // Top
+      case 3: return { x: width * Math.random(), y: height + 50 }; // Bottom
     }
   }
   
@@ -210,7 +195,6 @@ class AnimationController {
     const animate = (currentTime) => {
       const elapsed = currentTime - startTime;
       
-      // Calculate separate progress for circle and triangle based on their speeds
       let circleProgress = (elapsed / this.animationDuration) * this.circleSpeed;
       let triangleProgress = (elapsed / this.animationDuration) * this.triangleSpeed;
       
@@ -221,7 +205,6 @@ class AnimationController {
         return;
       }
       
-      // Update positions with individual progress
       if (triangleProgress < 1) {
         const trianglePos = this.getBezierPoint(
           Math.min(triangleProgress, 1),
