@@ -46,7 +46,6 @@ main {
     width: 100%;
     max-width: 1440px;
     margin: 0 auto;
-    padding: 0 15px;
 }
 
 .hero-section {
@@ -131,14 +130,15 @@ main {
 
 .project-card {
     width: 1040px;
-    height: auto;
+    height: 580px;
     margin: 0 auto 90px;
     background-color: #F0FFED;
     border-radius: 50px;
     padding: 40px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.1);
     display: flex;
     position: relative;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
 }
 
@@ -185,10 +185,10 @@ main {
 }
 
 .project-details {
-    position: relative;
+    position: absolute;
     margin-top: 15px;
-    bottom: auto;
-    left: auto;
+    bottom: 70px;
+    left: 60px;
     display: flex;
     gap: 60px;
 }
@@ -196,6 +196,13 @@ main {
 .detail-group {
     display: flex;
     flex-direction: column;
+}
+
+.detail-group:nth-child(2) {
+    position: relative;
+    left: auto;
+    margin-left: 0;
+    width: auto;
 }
 
 .detail-label {
@@ -210,9 +217,9 @@ main {
 }
 
 .view-project-btn {
-    position: relative;
-    bottom: auto;
-    left: auto;
+    position: absolute;
+    bottom: 70px;
+    left: 550px;
     width: 145px;
     height: 68px;
     background-color: #2A2A2A;
@@ -225,7 +232,6 @@ main {
     font-size: 16px;
     font-weight: 500;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin-top: 30px;
 }
 
 .view-project-btn:hover {
@@ -277,7 +283,7 @@ main {
 
 .about {
     background-color: #363636;
-    padding: 40px 0;
+    padding: 10px 0;
     text-align: center;
 }
 
@@ -374,11 +380,20 @@ main {
     padding-bottom: 70px;
 }
 
-/* Mobile Responsive Styles */
-@media screen and (max-width: 1024px) {
+/* Mobile Responsive Styles (below 768px) */
+@media screen and (max-width: 768px) {
+    main {
+        padding: 0 10px;
+    }
+
     .navbar {
         gap: 50px;
-        padding: 15px 30px;
+        padding: 15px 20px;
+        width: 90%;
+    }
+
+    .navbar a {
+        font-size: 14px;
     }
 
     .hero-section {
@@ -390,52 +405,8 @@ main {
     }
 
     .hero-description {
-        font-size: 18px;
-        max-width: 600px;
-    }
-
-    .project-card {
-        width: 100%;
-        max-width: 800px;
-    }
-
-    .project-image {
-        width: 350px;
-        height: 250px;
-    }
-
-    .project-content {
-        width: calc(100% - 400px);
-    }
-
-    .more-works {
-        width: 450px;
-        height: 250px;
-    }
-
-    .more-works h2 {
-        margin-top: 90px;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .navbar {
-        gap: 30px;
-        padding: 10px 20px;
-        width: 90%;
-    }
-
-    .navbar a {
-        font-size: 14px;
-    }
-
-    .hero-section h1 {
-        font-size: 28px;
-    }
-
-    .hero-description {
         font-size: 16px;
-        padding: 0 20px;
+        padding: 0 15px;
     }
 
     .scroll-indicator {
@@ -443,9 +414,10 @@ main {
     }
 
     .project-card {
-        flex-direction: column;
+        width: 100%;
+        height: auto;
         padding: 20px;
-        max-width: 100%;
+        flex-direction: column;
     }
 
     .project-image {
@@ -468,29 +440,51 @@ main {
         font-size: 20px;
     }
 
+    .project-description {
+        font-size: 14px;
+    }
+
     .project-details {
-        flex-direction: column;
-        gap: 20px;
+        position: relative;
+        bottom: auto;
+        left: auto;
+        margin-top: 20px;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .detail-label {
+        font-size: 14px;
     }
 
     .detail-value {
         font-size: 20px;
+        margin-top: 10px;
     }
 
     .view-project-btn {
-        margin: 20px auto 0;
+        position: relative;
+        bottom: auto;
+        left: auto;
         width: 120px;
         height: 50px;
+        font-size: 14px;
+        margin-top: 20px;
+        display: inline-flex;
     }
 
     .more-works {
         width: 90%;
-        height: 200px;
+        height: 250px;
     }
 
     .more-works h2 {
-        margin-top: 70px;
+        margin-top: 90px;
         font-size: 20px;
+    }
+
+    .about {
+        padding: 20px 0;
     }
 
     .about h2 {
@@ -503,71 +497,12 @@ main {
     }
 
     .quote {
-        font-size: 20px;
-        padding: 0 20px;
+        font-size: 18px;
+        padding: 0 15px;
     }
 
     .social-links {
         gap: 30px;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .navbar {
-        flex-direction: column;
-        gap: 15px;
-        padding: 15px;
-        top: 5px;
-    }
-
-    .hero-section {
-        margin-top: 100px;
-    }
-
-    .hero-section h1 {
-        font-size: 24px;
-    }
-
-    .hero-description {
-        font-size: 14px;
-    }
-
-    .scroll-indicator {
-        margin: 80px auto 0;
-    }
-
-    .project-content h2 {
-        font-size: 24px;
-    }
-
-    .project-content h3 {
-        font-size: 18px;
-    }
-
-    .project-description {
-        font-size: 14px;
-    }
-
-    .detail-label {
-        font-size: 14px;
-    }
-
-    .detail-value {
-        font-size: 18px;
-        margin-top: 10px;
-    }
-
-    .about h2 {
-        font-size: 24px;
-    }
-
-    .profile-image {
-        width: 150px;
-        height: 150px;
-    }
-
-    .quote {
-        font-size: 16px;
     }
 
     .social-icon {
