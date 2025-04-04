@@ -54,17 +54,17 @@ body {
 /* Header Container for Logo and Toggle */
 .header-container {
     position: fixed;
-    top: 10px; /* Matches navbar top margin */
+    top: 0;
     left: 0;
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 10px; /* Reduced side margin */
-    z-index: 1001;
+    z-index: 1000; /* Lower than navbar */
 }
 
+/* Logo Positioning */
 .logo {
+    position: absolute;
+    top: 10px; /* Matches navbar top */
+    left: 10px; /* Margin from left edge */
     width: 50px;
     height: 50px;
 }
@@ -95,7 +95,7 @@ body.dark-mode .logo.night {
     padding: 20px 40px;
     background-color: var(--navbar-bg);
     border-radius: 20px;
-    z-index: 1000;
+    z-index: 1001; /* Higher than header-container */
 }
 
 .navbar a {
@@ -197,7 +197,7 @@ main {
 }
 
 .scroll-indicator .arrow-down {
-    animation: bounceDown 1s ease-in-out infinite;
+    animation: AscrollDown 1s ease-in-out infinite;
 }
 
 .projects {
@@ -318,7 +318,7 @@ body.dark-mode .project-card:hover {
 }
 
 body.dark-mode .view-project-btn {
-    box-shadow: none; /* Reset default shadow in night mode */
+    box-shadow: none;
 }
 
 body.dark-mode .view-project-btn:hover {
@@ -476,6 +476,9 @@ body.dark-mode .more-works:hover {
 
 /* Night Mode Toggle Styles */
 .night-mode-toggle {
+    position: absolute;
+    top: 10px; /* Matches navbar top */
+    right: 10px; /* Margin from right edge */
     display: flex;
     align-items: center;
 }
@@ -500,13 +503,16 @@ body.dark-mode .night-mode-toggle label {
 
 /* Mobile Responsive Styles (below 768px) */
 @media screen and (max-width: 768px) {
-    .header-container {
-        padding: 0 5px; /* Reduced side margin for mobile */
-    }
-
     .logo {
+        top: 5px; /* Slightly reduced for mobile */
+        left: 5px; /* Reduced margin */
         width: 40px;
         height: 40px;
+    }
+
+    .night-mode-toggle {
+        top: 5px; /* Slightly reduced for mobile */
+        right: 5px; /* Reduced margin */
     }
 
     .night-mode-toggle label {
@@ -578,7 +584,7 @@ body.dark-mode .night-mode-toggle label {
 
     .project-content h3 {
         font-size: 18px;
-        margin-top: 15px; /* Reduced from 25px */
+        margin-top: 15px;
     }
 
     .project-description {
@@ -590,7 +596,7 @@ body.dark-mode .night-mode-toggle label {
         position: relative;
         bottom: auto;
         left: auto;
-        margin-top: 20px; /* Reduced from 30px */
+        margin-top: 20px;
         gap: 40px;
         align-items: flex-start;
         justify-content: space-between;
@@ -598,7 +604,7 @@ body.dark-mode .night-mode-toggle label {
     }
 
     .detail-group {
-        margin-bottom: 10px; /* Reduced from 20px */
+        margin-bottom: 10px;
     }
 
     .detail-label {
@@ -607,7 +613,7 @@ body.dark-mode .night-mode-toggle label {
 
     .detail-value {
         font-size: 18px;
-        margin-top: 5px; /* Reduced from 10px */
+        margin-top: 5px; /* Adjustable margin below timeline */
     }
 
     .view-project-btn {
@@ -632,12 +638,12 @@ body.dark-mode .night-mode-toggle label {
     }
 
     .about {
-        padding: 20px 0; /* Reduced from 30px */
+        padding: 20px 0;
     }
 
     .about h2 {
         font-size: 24px;
-        margin-bottom: 40px; /* Reduced from 80px */
+        margin-bottom: 40px;
     }
 
     .profile-image {
@@ -648,15 +654,15 @@ body.dark-mode .night-mode-toggle label {
     .quote {
         font-size: 16px;
         padding: 0 20px;
-        margin-top: 40px; /* Reduced from 80px */
+        margin-top: 40px;
     }
 
     .social-container {
-        margin-top: 50px; /* Reduced from 90px */
+        margin-top: 50px;
     }
 
     .social-links {
-        gap: 25px; /* Reduced from 35px */
+        gap: 25px;
     }
 
     .social-icon {
@@ -669,7 +675,7 @@ body.dark-mode .night-mode-toggle label {
     }
 
     .footer-content {
-        margin-top: 80px; /* Reduced from 120px */
+        margin-top: 80px;
         padding: 0 20px;
     }
 
@@ -679,6 +685,6 @@ body.dark-mode .night-mode-toggle label {
     }
 
     .footer-content .name {
-        margin-bottom: 20px; /* Reduced from 40px */
+        margin-bottom: 20px;
     }
 }
