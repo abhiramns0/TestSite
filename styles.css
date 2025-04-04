@@ -383,41 +383,49 @@ main {
 /* Mobile Responsive Styles (below 768px) */
 @media screen and (max-width: 768px) {
     main {
-        padding: 0 10px;
+        padding: 0 20px;
     }
 
     .navbar {
-        gap: 50px;
+        gap: 40px;
         padding: 15px 20px;
-        width: 90%;
+        width: auto;
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     .navbar a {
-        font-size: 14px;
+        font-size: 12px;
     }
 
     .hero-section {
-        margin-top: 150px;
+        margin-top: 200px;
     }
 
     .hero-section h1 {
-        font-size: 32px;
+        font-size: 28px;
     }
 
     .hero-description {
-        font-size: 16px;
-        padding: 0 15px;
+        font-size: 14px;
+        padding: 0 20px;
+        margin: 80px auto 0;
     }
 
     .scroll-indicator {
-        margin: 100px auto 0;
+        margin: 120px auto 0;
+    }
+
+    .projects {
+        margin-top: 120px;
     }
 
     .project-card {
         width: 100%;
         height: auto;
-        padding: 20px;
+        padding: 30px;
         flex-direction: column;
+        margin: 0 auto 120px;
     }
 
     .project-image {
@@ -429,66 +437,86 @@ main {
     .project-content {
         width: 100%;
         margin-left: 0;
-        margin-top: 20px;
+        margin-top: 30px;
     }
 
     .project-content h2 {
-        font-size: 28px;
+        font-size: 24px;
     }
 
     .project-content h3 {
-        font-size: 20px;
+        font-size: 18px;
+        margin-top: 25px;
     }
 
     .project-description {
-        font-size: 14px;
+        font-size: 12px;
+        margin-top: 40px;
     }
 
     .project-details {
         position: relative;
         bottom: auto;
         left: auto;
-        margin-top: 20px;
-        gap: 30px;
-        flex-wrap: wrap;
+        margin-top: 30px;
+        gap: 40px;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+    }
+
+    .detail-group {
+        margin-bottom: 20px;
+    }
+
+    .detail-group:first-child {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
     }
 
     .detail-label {
-        font-size: 14px;
+        font-size: 12px;
     }
 
     .detail-value {
-        font-size: 20px;
+        font-size: 18px;
         margin-top: 10px;
+    }
+
+    .detail-group:first-child .detail-value {
+        margin-top: 0;
     }
 
     .view-project-btn {
         position: relative;
         bottom: auto;
         left: auto;
-        width: 120px;
-        height: 50px;
-        font-size: 14px;
-        margin-top: 20px;
-        display: inline-flex;
+        width: 100px;
+        height: 40px;
+        font-size: 12px;
+        margin: 0;
     }
 
     .more-works {
         width: 90%;
         height: 250px;
+        margin: 120px auto;
     }
 
     .more-works h2 {
         margin-top: 90px;
-        font-size: 20px;
+        font-size: 18px;
     }
 
     .about {
-        padding: 20px 0;
+        padding: 30px 0;
     }
 
     .about h2 {
-        font-size: 28px;
+        font-size: 24px;
+        margin-bottom: 80px;
     }
 
     .profile-image {
@@ -497,12 +525,17 @@ main {
     }
 
     .quote {
-        font-size: 18px;
-        padding: 0 15px;
+        font-size: 16px;
+        padding: 0 20px;
+        margin-top: 80px;
+    }
+
+    .social-container {
+        margin-top: 90px;
     }
 
     .social-links {
-        gap: 30px;
+        gap: 35px;
     }
 
     .social-icon {
@@ -511,11 +544,20 @@ main {
     }
 
     .social-link span {
-        font-size: 12px;
+        font-size: 11px;
+    }
+
+    .footer-content {
+        margin-top: 120px;
+        padding: 0 20px;
     }
 
     .footer-content .name,
     .footer-content .copyright {
-        font-size: 14px;
+        font-size: 12px;
+    }
+
+    .footer-content .name {
+        margin-bottom: 40px;
     }
 }
