@@ -478,7 +478,7 @@ body.dark-mode .more-works:hover {
 .night-mode-toggle {
     position: absolute;
     top: 10px; /* Matches navbar top */
-    right: 10px; /* Margin from right edge */
+    right: 100px; /* Margin from right edge */
     display: flex;
     align-items: center;
 }
