@@ -64,7 +64,7 @@ body {
 .logo {
     position: absolute;
     top: 20px; /* Matches navbar top */
-    left: 200px; /* Margin from left edge SEE HERE I JUST ADDED -*/ 
+    left: 150px; /* Margin from left edge SEE HERE I JUST ADDED -*/ 
     width: 50px;
     height: 50px;
     z-index: 1002; /* Ensure it’s above other elements */
@@ -479,7 +479,7 @@ body.dark-mode .more-works:hover {
 .night-mode-toggle {
     position: absolute;
     top: 20px; /* Matches navbar top */
-    right: 200px; /* Margin from right edge */
+    right: 150px; /* Margin from right edge */
     display: flex;
     align-items: center;
     z-index: 1002; /* Ensure it’s above other elements */
