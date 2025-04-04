@@ -57,7 +57,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000; /* Lower than navbar */
+    z-index: 1001; /* Lower than navbar */
 }
 
 /* Logo Positioning */
@@ -67,6 +67,7 @@ body {
     left: 200px; /* Margin from left edge SEE HERE I JUST ADDED -*/ 
     width: 50px;
     height: 50px;
+    z-index: 1002; /* Ensure it’s above other elements */
 }
 
 .logo.day {
@@ -95,7 +96,7 @@ body.dark-mode .logo.night {
     padding: 20px 40px;
     background-color: var(--navbar-bg);
     border-radius: 20px;
-    z-index: 1001; /* Higher than header-container */
+    z-index: 1002; /* Higher than header-container */
 }
 
 .navbar a {
@@ -481,6 +482,8 @@ body.dark-mode .more-works:hover {
     right: 200px; /* Margin from right edge */
     display: flex;
     align-items: center;
+    z-index: 1002; /* Ensure it’s above other elements */
+}
 }
 
 .night-mode-toggle input {
