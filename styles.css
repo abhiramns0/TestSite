@@ -30,11 +30,11 @@ body.dark-mode {
     --text-color: #B0B0B0;
     --heading-color: #FFFFFF;
     --navbar-bg: rgba(30, 30, 30, 0.9);
-    --project-card-bg: #1E1E1E;
-    --project-card-bg-2: #1E1E1E;
-    --project-card-bg-3: #1E1E1E;
-    --project-card-bg-4: #1E1E1E;
-    --project-card-bg-5: #1E1E1E;
+    --project-card-bg: #10280A;
+    --project-card-bg-2: #252525;
+    --project-card-bg-3: #312100;
+    --project-card-bg-4: #000B29;
+    --project-card-bg-5: #170140;
     --more-works-bg: #1E1E1E;
     --about-bg: #1E1E1E;
     --about-text: #B0B0B0;
@@ -64,7 +64,7 @@ body {
 .logo {
     position: absolute;
     top: 10px; /* Matches navbar top */
-    left: 10px; /* Margin from left edge */
+    left: -100px; /* Margin from left edge SEE HERE I JUST ADDED -*/ 
     width: 50px;
     height: 50px;
 }
