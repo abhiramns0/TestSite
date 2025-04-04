@@ -286,6 +286,12 @@ window.addEventListener('load', () => {
     <a href="#work">Work</a>
     <a href="#about">About</a>
     <a href="https://drive.google.com/file/d/137oiF-6MtJzSn1vhQD5wgykKUSkIyFAO/view?usp=sharing" target="_blank">Resume</a>
+
+<div class="night-mode-toggle">
+    <input type="checkbox" id="night-mode-toggle">
+    <label for="night-mode-toggle"></label>
+</div>
+        
 </nav>
     <main>
         <div class="hero-section">
@@ -465,5 +471,12 @@ An online Marketplace, Community and Awareness program to support the small scal
     </section>
 </section>
     </main>
+
+    <script>
+    document.getElementById('night-mode-toggle').addEventListener('change', function() {
+        document.body.classList.toggle('dark-mode');
+    });
+</script>
+    
 </body>
 </html>
