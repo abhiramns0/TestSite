@@ -65,8 +65,8 @@ body {
 /* Logo Positioning */
 .logo {
     position: absolute;
-    top: 20px; /* Matches your adjustment */
-    left: 150px; /* Your custom margin from left edge */
+    top: 15px; /* Matches your adjustment */
+    left: 50px; /* Your custom margin from left edge */
     width: 50px;
     height: 50px;
     z-index: 1002; /* Ensure it’s above other elements */
@@ -116,8 +116,8 @@ body.dark-mode .logo.night {
 /* Night Mode Toggle Styles */
 .night-mode-toggle {
     position: absolute;
-    top: 20px; /* Matches your adjustment */
-    right: 150px; /* Your custom margin from right edge */
+    top: 15px; /* Matches your adjustment */
+    right: 50px; /* Your custom margin from right edge */
     display: flex;
     align-items: center;
     z-index: 1002; /* Ensure it’s above other elements */
