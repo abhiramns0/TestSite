@@ -9,6 +9,7 @@
     --bg-color: white;
     --text-color: #696969;
     --heading-color: #696969;
+    --subheading-color: #2A2A2A;
     --navbar-bg: rgba(255, 255, 255, 0.9);
     --project-card-bg: #F0FFED;
     --project-card-bg-2: #EDF4FF;
@@ -27,8 +28,9 @@
 /* Define dark mode colors */
 body.dark-mode {
     --bg-color: #121212;
-    --text-color: #FFFFFF;
+    --text-color: #D9D9D9;
     --heading-color: #FFFFFF;
+    --subheading-color: #FFFFFF;
     --navbar-bg: rgba(30, 30, 30, 0.9);
     --project-card-bg: #10280A; /* Your custom night mode color */
     --project-card-bg-2: #252525; /* Your custom night mode color */
@@ -280,7 +282,7 @@ body.dark-mode .project-card:hover {
 }
 
 .project-content h2 {
-    color: var(--heading-color);
+    color: var(--subheading-color);
     font-size: 36px;
     font-weight: 500;
 }
