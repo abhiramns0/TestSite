@@ -8,7 +8,7 @@
 :root {
     --bg-color: white;
     --text-color: #696969;
-    --heading-color: #2A2A2A;
+    --heading-color: #696969;
     --navbar-bg: rgba(255, 255, 255, 0.9);
     --project-card-bg: #F0FFED;
     --project-card-bg-2: #EDF4FF;
@@ -27,7 +27,7 @@
 /* Define dark mode colors */
 body.dark-mode {
     --bg-color: #121212;
-    --text-color: #B0B0B0;
+    --text-color: #FFFFFF;
     --heading-color: #FFFFFF;
     --navbar-bg: rgba(30, 30, 30, 0.9);
     --project-card-bg: #10280A; /* Your custom night mode color */
@@ -37,7 +37,7 @@ body.dark-mode {
     --project-card-bg-5: #170140; /* Your custom night mode color */
     --more-works-bg: #1E1E1E;
     --about-bg: #1E1E1E;
-    --about-text: #B0B0B0;
+    --about-text: #FFFFFF;
     --button-bg: #DEDEDE;
     --button-text: #000000;
     --shadow-color: rgba(255, 255, 255, 0.1);
