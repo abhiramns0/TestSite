@@ -30,11 +30,11 @@ body.dark-mode {
     --text-color: #B0B0B0;
     --heading-color: #FFFFFF;
     --navbar-bg: rgba(30, 30, 30, 0.9);
-    --project-card-bg: #10280A;
-    --project-card-bg-2: #252525;
-    --project-card-bg-3: #312100;
-    --project-card-bg-4: #000B29;
-    --project-card-bg-5: #170140;
+    --project-card-bg: #10280A; /* Your custom night mode color */
+    --project-card-bg-2: #252525; /* Your custom night mode color */
+    --project-card-bg-3: #312100; /* Your custom night mode color */
+    --project-card-bg-4: #000B29; /* Your custom night mode color */
+    --project-card-bg-5: #170140; /* Your custom night mode color */
     --more-works-bg: #1E1E1E;
     --about-bg: #1E1E1E;
     --about-text: #B0B0B0;
@@ -57,35 +57,36 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1001; /* Lower than navbar */
+    z-index: 1001; /* Above animation-container but below navbar */
 }
 
 /* Logo Positioning */
 .logo {
     position: absolute;
-    top: 20px; /* Matches navbar top */
-    left: 150px; /* Margin from left edge SEE HERE I JUST ADDED -*/ 
+    top: 20px; /* Matches your adjustment */
+    left: 150px; /* Your custom margin from left edge */
     width: 50px;
     height: 50px;
     z-index: 1002; /* Ensure it’s above other elements */
 }
 
 .logo.day {
-    display: block;
+    display: block; /* Visible in day mode */
 }
 
 .logo.night {
-    display: none;
+    display: none; /* Hidden in day mode */
 }
 
 body.dark-mode .logo.day {
-    display: none;
+    display: none; /* Hidden in dark mode */
 }
 
 body.dark-mode .logo.night {
-    display: block;
+    display: block; /* Visible in dark mode */
 }
 
+/* Navbar */
 .navbar {
     position: fixed;
     top: 10px;
@@ -96,7 +97,7 @@ body.dark-mode .logo.night {
     padding: 20px 40px;
     background-color: var(--navbar-bg);
     border-radius: 20px;
-    z-index: 1002; /* Higher than header-container */
+    z-index: 1002; /* Matches logo and toggle for consistency */
 }
 
 .navbar a {
@@ -108,6 +109,36 @@ body.dark-mode .logo.night {
 
 .navbar a:hover {
     opacity: 0.7;
+}
+
+/* Night Mode Toggle Styles */
+.night-mode-toggle {
+    position: absolute;
+    top: 20px; /* Matches your adjustment */
+    right: 150px; /* Your custom margin from right edge */
+    display: flex;
+    align-items: center;
+    z-index: 1002; /* Ensure it’s above other elements */
+}
+
+.night-mode-toggle input {
+    display: none !important; /* Reinforced to hide checkbox */
+}
+
+.night-mode-toggle label {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    background: url('toggle-day.png') no-repeat center;
+    background-size: contain;
+    cursor: pointer;
+    margin: 0; /* Remove default margins */
+    padding: 0; /* Remove default padding */
+}
+
+body.dark-mode .night-mode-toggle label {
+    background: url('toggle-night.png') no-repeat center;
+    background-size: contain;
 }
 
 html {
@@ -172,7 +203,7 @@ main {
 }
 
 .scroll-indicator:hover .hover-circle {
-    opacity: 5;
+    opacity: 0.5; /* Adjusted from 5 to a valid opacity value (0-1) */
     box-shadow: 0 0 20px var(--hover-shadow);
 }
 
@@ -198,7 +229,7 @@ main {
 }
 
 .scroll-indicator .arrow-down {
-    animation: AscrollDown 1s ease-in-out infinite;
+    animation: bounceDown 1s ease-in-out infinite; /* Fixed typo 'AscrollDown' */
 }
 
 .projects {
@@ -347,7 +378,7 @@ body.dark-mode .view-project-btn:hover {
 }
 
 body.dark-mode .more-works {
-    box-shadow: inset 0 0 15px var(--shadow-color);
+    box-shadow:inset  0 0 15px var(--shadow-color);
 }
 
 body.dark-mode .more-works:hover {
@@ -473,35 +504,6 @@ body.dark-mode .more-works:hover {
     color: var(--about-text);
     display: block;
     padding-bottom: 70px;
-}
-
-/* Night Mode Toggle Styles */
-.night-mode-toggle {
-    position: absolute;
-    top: 20px; /* Matches navbar top */
-    right: 150px; /* Margin from right edge */
-    display: flex;
-    align-items: center;
-    z-index: 1002; /* Ensure it’s above other elements */
-}
-}
-
-.night-mode-toggle input {
-    display: none;
-}
-
-.night-mode-toggle label {
-    display: inline-block;
-    width: 50px;
-    height: 50px;
-    background: url('toggle-day.png') no-repeat center;
-    background-size: contain;
-    cursor: pointer;
-}
-
-body.dark-mode .night-mode-toggle label {
-    background: url('toggle-night.png') no-repeat center;
-    background-size: contain;
 }
 
 /* Mobile Responsive Styles (below 768px) */
