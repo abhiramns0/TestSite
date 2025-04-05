@@ -12,8 +12,8 @@
     --subheading-color: #2A2A2A;
     --navbar-bg: rgba(245, 255, 245, 1);
     --project-card-bg: #F0FFED;
-    --project-card-bg-2: #EDF4FF;
-    --project-card-bg-3: #F1F1F1;
+    --project-card-bg-2: #F1F1F1;
+    --project-card-bg-3: #EDF4FF;
     --project-card-bg-4: #ECF3FF;
     --project-card-bg-5: #F0E8FF;
     --more-works-bg: white;
@@ -33,8 +33,8 @@ body.dark-mode {
     --subheading-color: #FFFFFF;
     --navbar-bg: rgba(30, 30, 30, 0.9);
     --project-card-bg: #10280A; /* Your custom night mode color */
-    --project-card-bg-2: #252525; /* Your custom night mode color */
-    --project-card-bg-3: #3A3105; /* Your custom night mode color */
+    --project-card-bg-2: #3A3105; /* Your custom night mode color */
+    --project-card-bg-3: #252525; /* Your custom night mode color */
     --project-card-bg-4: #000B29; /* Your custom night mode color */
     --project-card-bg-5: #170140; /* Your custom night mode color */
     --more-works-bg: #1E1E1E;
