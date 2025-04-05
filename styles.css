@@ -38,8 +38,8 @@ body.dark-mode {
     --more-works-bg: #1E1E1E;
     --about-bg: #1E1E1E;
     --about-text: #B0B0B0;
-    --button-bg: #333333;
-    --button-text: #FFFFFF;
+    --button-bg: #DEDEDE;
+    --button-text: #000000;
     --shadow-color: rgba(255, 255, 255, 0.1);
     --hover-shadow: rgba(255, 255, 255, 0.2);
 }
